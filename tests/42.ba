@@ -1,0 +1,7 @@
+# vim: set ft=ruby:
+
+push 21 # TODO: handle endianness problems
+dup
+add
+print
+halt

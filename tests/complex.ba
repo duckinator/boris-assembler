@@ -1,0 +1,157 @@
+# Boris assembly file
+# vim: set ft=ruby:
+!bits 64
+
+# labelled strings
+## nul-terminated
+hello1 = "Hello, world!\n\0"
+## pascal-style
+hello2 = !len "Hello, world!\n";
+
+#blank-space = !repeat 20 nop;
+
+label :test_literals do
+    push 3 push 4 add
+    # stack: 7
+    drop
+
+    push 4.0 push 2.5 fsub
+    # stack: 1.5
+    drop
+
+    # hex is fine
+    push 0xFF push 0x01 add
+    # stack: 256 (0x100)
+    drop
+
+    # binary too
+    push 0b1000 push 0b0101 add
+    # stack: 13 (0b1101)
+    drop
+
+    # characters are numbers
+    push 'a' push 97
+    eq
+    # stack: (true)
+    drop
+    ret
+end
+
+label :test_dynamic_jumps do
+    push @done
+    push @two
+    push @one
+    jmp*            # jump to @one, leaving (@done @two)
+    label :_two do
+        jmp*            # jump to @done, stack is now empty
+    end
+
+    label :_one do
+        jmp*            # jump to @two, leaving (@done)
+    end
+
+    label :_done do
+        ret
+    end
+end
+
+# x y -> x*y
+label :mult1 do
+    push 0 >r       # put an accumulator on the return stack initialized to 0
+    over jz @done   # jump if x==0
+    label :_loop do
+        dup jz @done    # jump if y==0
+        over r> add >r  # accumulator += x
+        dec             # y--
+        jmp @loop       # do it again!
+    end
+    label :_done:
+        drop drop       # drop x and y
+        r>              # return the accumulator
+        ret             # exit the subroutine
+    end
+end
+
+# Recursive multiply (non-negative integers)
+# x y -> x*y
+label :mult2 do
+    over push 0 eq  # x == 0
+    over push 0 eq  # y == 0
+    or
+    jnz @zero
+
+    over over gt    # x > y
+    jnz @swap
+
+    swap dec swap   # x-1 y
+    dup -rot        # y x-1 y
+    call @mult      # y (x-1)*y
+    add             # y+(x-1)*y, or in other words, x*y
+    ret             # return from mult
+    label :_swap do
+        swap            # y x
+        call @mult      # y*x
+        ret             # return from mult
+    end
+    label :_zero do
+        drop drop
+        push 0
+        ret             # return from mult
+    end
+end
+
+# Recursive factorial
+# x -> x!
+label :fact1 do
+    dup jz @zero    # jump if x==0
+    dup dec         # stack: x x-1
+    call @fact      # stack: x (x-1)!
+    mult            # stack: x*(x-1)!     (i.e. x!)
+    ret             # return from fact
+    label :_zero do
+        drop
+        push 1
+        ret             # return from fact
+    end
+end
+
+# Simple loop factorial
+# x -> x!
+label :fact2 do
+    push 1          # accumulator
+    label :_loop do
+        over jz @done   # jump if x==0
+        over mult       # accumulator *= x
+        swap dec swap   # x--
+        jmp @loop       # repeat
+    end
+
+    label :_done do
+        nip             # (x acc -> acc), acc == x!
+        ret
+    end
+end
+
+# rot will actually be built-in, but it could be implemented like this:
+# rot(a b c -> b c a): >R swap R> swap;
+label :rot do
+    >r swap
+    r> swap
+    ret
+end
+# Then it would be called with "call @rot"
+
+# Also will be built-in (as -rot):
+label :'-rot1' do # a b c
+    swap          # a c b
+    >r            # a c (R: b)
+    swap          # c a (R: b)
+    r>            # c a b
+    ret
+end
+
+# Alternatively:
+label :'-rot2' do
+    rot rot
+    ret
+end

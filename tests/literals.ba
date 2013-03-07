@@ -1,0 +1,30 @@
+# vim: set ft=ruby:
+
+label :test_literals do
+    push 3 push 4 add
+    # stack: 7
+    drop
+
+    push 4.0 push 2.5 fsub
+    # stack: 1.5
+    drop
+
+    # hex is fine
+    push 0xFF push 0x01 add
+    # stack: 256 (0x100)
+    drop
+
+    # binary too
+    push 0b1000 push 0b0101 add
+    # stack: 13 (0b1101)
+    drop
+
+    # characters are numbers
+    push 'a' push 97
+    eq
+    # stack: (true)
+    drop
+    ret
+end
+
+call @test_literals
