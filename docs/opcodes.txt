@@ -1,0 +1,75 @@
+BorisVM Opcodes
+===============
+
+(From https://www.refheap.com/paste/12217)
+
+nop = 0
+
+push
+
+dup
+over
+drop
+nip
+swap
+rot
+-rot (reverse rot)
+
+jz
+jnz
+jmp
+call
+
+jz\*
+jnz\*
+jmp\*
+call\*
+
+store
+fetch
+
+cstore
+cfetch
+
+add
+sub
+mul
+smul
+div
+sdiv
+mod
+smod
+neg
+
+and
+or
+xor
+not
+
+shl
+shr
+ashr
+
+eq
+neq
+gt
+gte
+lt
+lte
+
+>r (to return stack)
+r> (return stack from)
+r@ (return stack fetch)
+
+fadd
+fsub
+fmul
+fdiv
+
+feq
+fneq
+fgt
+fgte
+flt
+flte
+
