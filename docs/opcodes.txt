@@ -20,10 +20,10 @@ jnz
 jmp
 call
 
-jz\*
-jnz\*
-jmp\*
-call\*
+jz*
+jnz*
+jmp*
+call*
 
 store
 fetch
