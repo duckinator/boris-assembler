@@ -1,16 +1,14 @@
 #!/usr/bin/env ruby
 
-alias :_print :print
-
 class Boris
-  instructions = ['nop', 'push', 'dup', 'drop', 'swap', 'add', 'print', 'halt']
+  instructions = %w[nop push dup drop swap add print halt]
 
   instructions.each_with_index do |instruction, i|
     define_method(instruction) do |*args|
       # http://www.ruby-doc.org/core-2.0/Array.html#method-i-pack
       # Instructions = uint8_t; arguments = uint32_t
-      _print [i].pack("C")
-      args.map{|x| _print [x].pack("L") }
+      Kernel.print [i].pack("C")
+      args.map{|x| Kernel.print [x].pack("L") }
     end
   end
 
