@@ -27,9 +27,9 @@ class Boris
 
 
 
-  def generate_bytecode(text)
+  def generate_bytecode(code)
     # I am sorry beyond words.
-    eval text
+    eval code
   end
 end
 
