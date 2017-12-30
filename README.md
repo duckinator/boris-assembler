@@ -1,4 +1,4 @@
-Assembler for [tsion/boris](https://github.com/tsion/boris).
+Assembler for [solson/boris](https://github.com/solson/boris).
 
 Usage: `./boris-asm.rb in.ba > out.bs`
 
